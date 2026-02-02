@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CLICKER_App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+            padding: 20px;
+            touch-action: manipulation;
+            overflow: hidden;
+        }
+
+        body.light {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        body.dark {
+            background: #1A1A1A;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            padding: 20px 0;
+        }
+
+        body.dark .title {
+            color: #00E676;
+            text-shadow: 
+                0 0 10px rgba(0, 230, 118, 0.8),
+                0 0 20px rgba(0, 230, 118, 0.6),
+                0 0 30px rgba(0, 230, 118, 0.5),
+                0 0 40px rgba(0, 230, 118, 0.4),
+                0 0 50px rgba(0, 230, 118, 0.3);
+        }
+
+        body.light .title {
+            color: #2979FF;
+            text-shadow: 
+                0 0 10px rgba(41, 121, 255, 0.7),
+                0 0 20px rgba(41, 121, 255, 0.5),
+                0 0 30px rgba(41, 121, 255, 0.4),
+                0 0 40px rgba(41, 121, 255, 0.3);
+        }
+
+        .counter-container {
+            padding: 30px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.dark .counter-container {
+            background: linear-gradient(145deg, #242424, #1e1e1e);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        body.light .counter-container {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .goal-section {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .goal-input {
+            width: 230px;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            direction: ltr;
+        }
+
+        body.dark .goal-input {
+            background: #000000;
+            color: #00E676;
+            border-color: #00E676;
+        }
+
+        body.light .goal-input {
+            background: #FFFFFF;
+            color: #2979FF;
+            border-color: #2979FF;
+        }
+
+        .goal-input:focus {
+            outline: none;
+            transform: scale(1.02);
+        }
+
+        body.dark .goal-input:focus {
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+
+        body.light .goal-input:focus {
+            box-shadow: 0 0 15px rgba(41, 121, 255, 0.4);
+        }
+
+        .goal-input::placeholder {
+            opacity: 0.5;
+        }
+
+        .cancel-goal-btn {
+            width: 70px;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark .cancel-goal-btn {
+            background: #000000;
+            color: #FF5252;
+            border-color: #FF5252;
+        }
+
+        body.light .cancel-goal-btn {
+            background: #FFFFFF;
+            color: #F44336;
+            border-color: #F44336;
+        }
+
+        .cancel-goal-btn:active {
+            transform: scale(0.95);
+        }
+
+        .cancel-goal-btn svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s ease;
+        }
+
+        body.dark .cancel-goal-btn svg {
+            fill: #FF5252;
+        }
+
+        body.light .cancel-goal-btn svg {
+            fill: #F44336;
+        }
+
+        .cancel-goal-btn:active svg {
+            transform: rotate(90deg);
+        }
+
+        .counter-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            direction: ltr;
+        }
+
+        .digit {
+            width: 70px;
+            height: 100px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .digit {
+            background: linear-gradient(145deg, #00E676, #00C853);
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4);
+            border: 2px solid #00E676;
+        }
+
+        body.light .digit {
+            background: linear-gradient(145deg, #2979FF, #1565C0);
+            box-shadow: 0 5px 15px rgba(41, 121, 255, 0.3);
+            border: 2px solid #2979FF;
+        }
+
+        body.dark .digit.goal-achieved {
+            background: linear-gradient(145deg, #FF5252, #E53935);
+            box-shadow: 0 5px 20px rgba(255, 82, 82, 0.6);
+            border: 2px solid #FF5252;
+        }
+
+        body.light .digit.goal-achieved {
+            background: linear-gradient(145deg, #F44336, #D32F2F);
+            box-shadow: 0 5px 20px rgba(244, 67, 54, 0.6);
+            border: 2px solid #F44336;
+        }
+
+        .digit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, 
+                rgba(255,255,255,0.2) 0%, 
+                transparent 50%,
+                rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+        }
+
+        .digit-number {
+            font-size: 3rem;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            transition: opacity 0.15s ease;
+        }
+
+        body.dark .digit-number {
+            color: #000000;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        body.light .digit-number {
+            color: #FFFFFF;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        .digit.animate .digit-number {
+            animation: flip 0.3s ease;
+        }
+
+        @keyframes flip {
+            0% { 
+                transform: rotateX(0deg); 
+                opacity: 1;
+            }
+            50% { 
+                transform: rotateX(90deg); 
+                opacity: 0;
+            }
+            51% { 
+                transform: rotateX(-90deg); 
+                opacity: 0;
+            }
+            100% { 
+                transform: rotateX(0deg); 
+                opacity: 1;
+            }
+        }
+
+        .click-btn {
+            width: 100%;
+            height: 75px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        body.dark .click-btn {
+            background: #000000;
+            color: #00E676;
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4);
+            border: 2px solid #00E676;
+        }
+
+        body.light .click-btn {
+            background: #FFFFFF;
+            color: #2979FF;
+            box-shadow: 0 8px 20px rgba(41, 121, 255, 0.3);
+            border: 2px solid #2979FF;
+        }
+
+        .click-btn:active {
+            transform: scale(0.96);
+        }
+
+        body.dark .click-btn:active {
+            box-shadow: 0 4px 12px rgba(0, 230, 118, 0.4);
+        }
+
+        body.light .click-btn:active {
+            box-shadow: 0 4px 12px rgba(41, 121, 255, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            flex: 1;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark .control-btn {
+            background: #000000;
+            border: 2px solid #00E676;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
+        }
+
+        body.light .control-btn {
+            background: #FFFFFF;
+            border: 2px solid #2979FF;
+            box-shadow: 0 0 15px rgba(41, 121, 255, 0.2);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn svg {
+            width: 30px;
+            height: 30px;
+            transition: transform 0.2s ease;
+        }
+
+        body.dark .control-btn svg {
+            fill: #00E676;
+        }
+
+        body.light .control-btn svg {
+            fill: #2979FF;
+        }
+
+        .reset-btn svg {
+            fill: none;
+            stroke-width: 2;
+        }
+
+        body.dark .reset-btn svg {
+            stroke: #00E676;
+        }
+
+        body.light .reset-btn svg {
+            stroke: #2979FF;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <div class="container">
+        <h1 class="title">مسبحة إلكترونية</h1>
+        
+        <div class="counter-container">
+            <div class="goal-section">
+                <input type="number" 
+                       class="goal-input" 
+                       id="goalInput" 
+                       placeholder="حدد رقم"
+                       min="0" 
+                       max="9999">
+                <button class="cancel-goal-btn" id="cancelGoalBtn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="counter-display" id="counter">
+                <div class="digit" data-position="3"><span class="digit-number">0</span></div>
+                <div class="digit" data-position="2"><span class="digit-number">0</span></div>
+                <div class="digit" data-position="1"><span class="digit-number">0</span></div>
+                <div class="digit" data-position="0"><span class="digit-number">0</span></div>
+            </div>
+
+            <button class="click-btn" id="clickBtn">تـسـبـيـح</button>
+
+            <div class="controls">
+                <button class="control-btn reset-btn" id="resetBtn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                </button>
+                <button class="control-btn theme-btn" id="themeBtn">
+                    <svg viewBox="0 0 24 24" id="themeIcon">
+                        <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+        
+        // State management
+        const state = {
+            count: 0,
+            goalValue: null,
+            goalAchieved: false,
+            isAnimating: false
+        };
+
+        const MAX_COUNT = 9999;
+        const CONFETTI_COLORS = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00E676', '#2979FF'];
+        
+        // Cache DOM elements
+        const elements = {
+            clickBtn: document.getElementById('clickBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            themeBtn: document.getElementById('themeBtn'),
+            goalInput: document.getElementById('goalInput'),
+            cancelGoalBtn: document.getElementById('cancelGoalBtn'),
+            body: document.body,
+            digits: document.querySelectorAll('.digit'),
+            themeIcon: document.getElementById('themeIcon'),
+            container: document.querySelector('.counter-container')
+        };
+
+        // Vibration helper
+        const vibrate = (pattern) => {
+            if (navigator.vibrate) {
+                navigator.vibrate(pattern);
+            }
+        };
+
+        // Update display efficiently
+        function updateDisplay() {
+            const countStr = state.count.toString().padStart(4, '0');
+            
+            elements.digits.forEach((digit, index) => {
+                const digitSpan = digit.querySelector('.digit-number');
+                const newValue = countStr[index];
+                
+                if (digitSpan.textContent !== newValue) {
+                    if (!state.isAnimating) {
+                        state.isAnimating = true;
+                        digit.classList.add('animate');
+                        
+                        requestAnimationFrame(() => {
+                            setTimeout(() => {
+                                digitSpan.textContent = newValue;
+                            }, 150);
+                            
+                            setTimeout(() => {
+                                digit.classList.remove('animate');
+                                state.isAnimating = false;
+                            }, 300);
+                        });
+                    } else {
+                        digitSpan.textContent = newValue;
+                    }
+                }
+            });
+
+            checkGoal();
+        }
+
+        // Check goal achievement
+        function checkGoal() {
+            const goalReached = state.goalValue !== null && state.count >= state.goalValue;
+            
+            if (goalReached && !state.goalAchieved) {
+                state.goalAchieved = true;
+                elements.digits.forEach(digit => digit.classList.add('goal-achieved'));
+                createConfetti();
+                vibrate([100, 50, 100]);
+            } else if (!goalReached && state.goalAchieved) {
+                state.goalAchieved = false;
+                elements.digits.forEach(digit => digit.classList.remove('goal-achieved'));
+            }
+        }
+
+        // Optimized confetti creation
+        function createConfetti() {
+            const fragment = document.createDocumentFragment();
+            const confettiElements = [];
+            
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: -10px;
+                    background: ${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]};
+                    animation: confetti-fall ${2 + Math.random()}s linear forwards;
+                    animation-delay: ${i * 0.05}s;
+                `;
+                fragment.appendChild(confetti);
+                confettiElements.push(confetti);
+            }
+            
+            elements.container.appendChild(fragment);
+            
+            // Clean up after animation
+            setTimeout(() => {
+                confettiElements.forEach(el => el.remove());
+            }, 3500);
+        }
+
+        // Event handlers
+        function handleClick() {
+            if (state.count < MAX_COUNT) {
+                state.count++;
+                updateDisplay();
+                vibrate(10);
+            }
+        }
+
+        function handleReset() {
+            state.count = 0;
+            state.goalAchieved = false;
+            updateDisplay();
+            vibrate([50, 50, 50]);
+        }
+
+        function handleGoalInput(e) {
+            let value = parseInt(e.target.value);
+            
+            if (value > MAX_COUNT) {
+                e.target.value = MAX_COUNT;
+                value = MAX_COUNT;
+            }
+            
+            if (value >= 0 && value <= MAX_COUNT) {
+                state.goalValue = value;
+                state.goalAchieved = false;
+                checkGoal();
+            } else if (!e.target.value) {
+                state.goalValue = null;
+                state.goalAchieved = false;
+                checkGoal();
+            }
+        }
+
+        function handleCancelGoal() {
+            state.goalValue = null;
+            state.goalAchieved = false;
+            elements.goalInput.value = '';
+            elements.digits.forEach(digit => digit.classList.remove('goal-achieved'));
+            vibrate(30);
+        }
+
+        function handleThemeToggle() {
+            elements.body.classList.toggle('dark');
+            elements.body.classList.toggle('light');
+            
+            const isDark = elements.body.classList.contains('dark');
+            elements.themeIcon.innerHTML = isDark 
+                ? '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>'
+                : '<path d="M9 2c-1.05 0-2.05.16-3 .46 4.06 1.27 7 5.06 7 9.54 0 4.48-2.94 8.27-7 9.54.95.3 1.95.46 3 .46 5.52 0 10-4.48 10-10S14.52 2 9 2z"/>';
+        }
+
+        // Attach event listeners
+        elements.clickBtn.addEventListener('click', handleClick);
+        elements.resetBtn.addEventListener('click', handleReset);
+        elements.themeBtn.addEventListener('click', handleThemeToggle);
+        elements.goalInput.addEventListener('input', handleGoalInput);
+        elements.cancelGoalBtn.addEventListener('click', handleCancelGoal);
+
+        // Prevent double-tap zoom on buttons
+        [elements.clickBtn, elements.resetBtn, elements.themeBtn, elements.cancelGoalBtn].forEach(btn => {
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                btn.click();
+            }, { passive: false });
+        });
+
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>
